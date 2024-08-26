@@ -1,0 +1,134 @@
+<!-- Contenedor Principal -->
+<div class="relative flex flex-col items-center justify-center min-h-screen p-4 bg-gray-900 text-white">
+
+  <!-- Botón de Iniciar Sesión / Icono del Usuario -->
+  <div class="absolute top-4 right-4">
+    <ng-container *ngIf="!isAuthenticated; else userMenu">
+      <button
+        (click)="toggleDropdown()"
+        class="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200"
+      >
+        Iniciar Sesión
+      </button>
+      <!-- Menú desplegable de inicio de sesión -->
+      <div *ngIf="showDropdown" class="absolute right-0 mt-2 w-56 sm:w-64 bg-gray-800 rounded-md shadow-lg z-10 p-4">
+        <!-- Texto de registro -->
+        <p class="text-center text-gray-400 mb-2">
+          ¿No tienes una cuenta? <a routerLink="/registro" class="text-blue-400 hover:text-blue-500">Regístrate aquí</a>
+        </p>
+        <!-- Formulario de inicio de sesión -->
+        <form (ngSubmit)="loginUser()">
+          <div class="mb-2">
+            <input
+              [(ngModel)]="loginData.username"
+              name="username"
+              type="text"
+              placeholder="Usuario"
+              required
+              class="border border-gray-600 rounded-lg p-2 bg-gray-700 text-white w-full placeholder-gray-400"
+            />
+          </div>
+          <div class="mb-2">
+            <input
+              [(ngModel)]="loginData.password"
+              name="password"
+              type="password"
+              placeholder="Contraseña"
+              required
+              class="border border-gray-600 rounded-lg p-2 bg-gray-700 text-white w-full placeholder-gray-400"
+            />
+          </div>
+          <button
+            type="submit"
+            class="bg-blue-500 text-white font-bold py-1 px-3 rounded-lg w-full hover:bg-blue-600 transition duration-200"
+          >
+            Entrar
+          </button>
+          <p *ngIf="errorLogin" class="text-red-500 text-sm font-semibold mt-1">{{ errorLogin }}</p>
+        </form>
+      </div>
+    </ng-container>
+    <!-- Menú de usuario autenticado -->
+    <ng-template #userMenu>
+      <div class="relative">
+        <button (click)="toggleDropdown()" class="bg-orange-500 text-white font-semibold py-2 px-4 rounded-full">
+          {{ userInitial }}
+        </button>
+        <div *ngIf="showDropdown" class="absolute right-0 mt-2 w-48 sm:w-56 bg-gray-800 rounded-md shadow-lg z-10">
+          <ul class="p-2">
+            <li class="hover:bg-gray-700 rounded-md px-2 py-1">
+              <a href="#" (click)="logout()" class="block text-white">Cerrar Sesión</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Tarjeta de Acortador de URL -->
+  <div class="bg-gray-800 shadow-2xl rounded-xl p-6 sm:p-8 max-w-md sm:max-w-xl w-full mx-auto">
+    <h1 class="text-3xl sm:text-4xl font-bold mb-6 text-center text-gray-100">Acorta tu URL</h1>
+    <form (ngSubmit)="shortenUrl()" #urlForm="ngForm" class="flex flex-col gap-4 sm:gap-6">
+      <input
+        [(ngModel)]="originalUrl"
+        name="originalUrl"
+        type="text"
+        placeholder="Introduce tu URL aquí"
+        required
+        [ngClass]="{'border-red-500': urlForm.submitted && !isValidUrl()}"
+        class="border border-gray-600 rounded-lg p-3 bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        #urlInput="ngModel"
+        (ngModelChange)="validateUrl(urlInput.value)"
+      />
+      <button
+        type="submit"
+        [disabled]="usosIniciales === 0 || !originalUrl || !isValidUrl()"
+        class="bg-blue-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-600 transition duration-200 disabled:bg-gray-500"
+      >
+        Acortar URL
+      </button>
+    </form>
+    <div *ngIf="!isAuthenticated" class="mt-6 flex flex-col items-center">
+      <p class="text-center text-gray-400 mb-2">Usos Restantes: {{usosIniciales}}</p>
+      <div class="relative group">
+        <button class="text-gray-400 hover:text-gray-200">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+          </svg>
+        </button>
+        <div class="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block w-64 p-2 bg-gray-700 text-white text-sm rounded shadow-lg">
+          Inicia sesión para obtener usos infinitos del acortador de URL.
+        </div>
+      </div>
+      <p *ngIf="mensajeError" class="text-red-500 font-bold mt-2">{{ mensajeError }}</p>
+    </div>
+    <div *ngIf="shortenedUrl" class="mt-6 text-center">
+      <p class="text-gray-400">URL acortada:</p>
+      <a [href]="shortenedUrl" target="_blank" class="text-blue-400 hover:underline">{{ shortenedUrl }}</a>
+    </div>
+  </div>
+
+  <!-- Nueva sección para mostrar enlaces -->
+  <div *ngIf="isAuthenticated" class="bg-gray-800 shadow-xl rounded-xl p-6 sm:p-8 mt-8 max-w-md sm:max-w-xl w-full mx-auto">
+    <h2 class="text-xl sm:text-2xl font-bold mb-4 text-gray-100">Mis Enlaces</h2>
+    <p *ngIf="!userLinks" class="text-gray-400">No has acortado ninguna URL</p>
+    <ul class="space-y-4">
+      <li *ngFor="let link of userLinks" class="bg-gray-700 rounded-lg p-4">
+        <p class="text-gray-300">{{ link.original_url }}</p>
+        <a [href]="link.short_url" target="_blank" class="text-blue-400 hover:underline">{{ link.short_url }}</a>
+      </li>
+    </ul>
+  </div>
+<footer class="bg-gray-900 text-white py-4 mt-8 w-full">
+    <div class="container mx-auto text-center">
+        <p>&copy; 2024 Tu Aplicación. Todos los derechos reservados.</p>
+        <p>🚀 Desarrollado por <strong class="text-white">Jose Manuel Cañete</strong> usando <span class="text-blue-400">Angular</span> y <span class="text-green-400">Node.js</span></p>
+
+    </div>
+</footer>
+  <!-- Aquí se renderiza el componente de la ruta actual -->
+  <router-outlet></router-outlet>
+</div>
+
+<!-- Footer -->
+

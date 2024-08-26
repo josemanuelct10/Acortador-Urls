@@ -1,0 +1,62 @@
+<div class="relative flex flex-col items-center justify-center min-h-screen p-4 bg-gray-900 text-white">
+  <div class="bg-gray-800 shadow-2xl rounded-xl p-8 max-w-md w-full">
+    <h1 class="text-3xl font-bold mb-6 text-center text-gray-100">Regístrate</h1>
+    <form [formGroup]="registrationForm" (ngSubmit)="registerUser()" class="flex flex-col gap-6">
+      <!-- Campo de nombre de usuario -->
+      <div class="mb-2">
+        <input
+          formControlName="username"
+          type="text"
+          placeholder="Usuario"
+          class="border border-gray-600 rounded-lg p-3 bg-gray-700 text-white placeholder-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <div *ngIf="registrationForm.get('username')?.invalid && (registrationForm.get('username')?.touched || registrationForm.get('username')?.dirty)" class="text-red-400 mt-1">
+          <div *ngIf="registrationForm.get('username')?.errors?.['required']">El nombre de usuario es obligatorio.</div>
+          <div *ngIf="registrationForm.get('username')?.errors?.['minlength']">El nombre de usuario debe tener al menos 3 caracteres.</div>
+        </div>
+      </div>
+
+      <!-- Campo de contraseña -->
+      <div class="mb-2">
+        <input
+          formControlName="password"
+          type="password"
+          placeholder="Contraseña"
+          class="border border-gray-600 rounded-lg p-3 bg-gray-700 text-white placeholder-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <div *ngIf="registrationForm.get('password')?.invalid && (registrationForm.get('password')?.touched || registrationForm.get('password')?.dirty)" class="text-red-400 mt-1">
+          <div *ngIf="registrationForm.get('password')?.errors?.['required']">La contraseña es obligatoria.</div>
+          <div *ngIf="registrationForm.get('password')?.errors?.['minlength']">La contraseña debe tener al menos 6 caracteres.</div>
+        </div>
+      </div>
+
+      <!-- Campo de confirmación de contraseña -->
+      <div class="mb-2">
+        <input
+          formControlName="confirmPassword"
+          type="password"
+          placeholder="Confirma tu contraseña"
+          class="border border-gray-600 rounded-lg p-3 bg-gray-700 text-white placeholder-gray-400 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <div *ngIf="registrationForm.errors?.['mismatch']" class="text-red-400 mt-1">
+          Las contraseñas no coinciden.
+        </div>
+      </div>
+
+      <!-- Botón de registro -->
+      <button
+        type="submit"
+        [disabled]="registrationForm.invalid"
+        class="bg-blue-500 text-white font-bold py-3 px-6 rounded-lg w-full hover:bg-blue-600 transition duration-200"
+      >
+        Registrarse
+      </button>
+
+      <!-- Enlace para ir al inicio de sesión -->
+      <div class="mt-4 text-center text-gray-400">
+        <p>¿Ya tienes una cuenta? <a routerLink="/" class="text-blue-400 hover:text-blue-500">Inicia sesión aquí</a></p>
+        <p *ngIf="mensajeError" class="text-red-400 mt-2">{{mensajeError}}</p> <!-- Mostrar mensaje de error -->
+      </div>
+    </form>
+  </div>
+</div>
