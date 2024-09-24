@@ -20,8 +20,16 @@ app.use((req, res, next) => {
     next();
 });
 
+const allowedOrigins = [
+    'http://localhost:4200',
+    'https://acortador-url-jmct.netlify.app'
+  ];
+
+
+
+
 app.use(cors({
-    origin: '*', // Reemplaza con el origen de tu frontend
+    origin: allowedOrigins, // Reemplaza con el origen de tu frontend
     credentials: true // Permitir el envío de credenciales (cookies, cabeceras de autorización, etc.)
 }));
 app.use(express.json()); // Usar express.json() en lugar de bodyParser.json()

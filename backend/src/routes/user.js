@@ -7,6 +7,6 @@ const userController = require('../controllers/usersController');
 router.post('/register', userController.createUser);
 router.post('/login', userController.login);
 router.get('/isAuthenticated', userController.isAuthenticated);
-router.get('/logout', userController.logout);
+router.post('/logout', userController.logout);
 
 module.exports = router;

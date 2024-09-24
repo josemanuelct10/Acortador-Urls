@@ -95,15 +95,17 @@ async function isAuthenticated(req, res) {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET); // Verificar el token
+        console.log(token);
         return res.status(200).send({ error: false, message: "Autenticado", user: decoded });
     } catch (error) {
         return res.status(200).send({ error: true, message: "Token inválido" });
     }
 }
 
-async function logout(req, res) {
-    res.clearCookie('access_token'); // Elimina la cookie
-    return res.status(200).send({ message: "Desconectado correctamente", error: false });
+function logout(req, res){
+    console.log("Cerrando Sesion...");
+    res.clearCookie('access_token'); // Elimina la cookie de sesión
+    res.status(200).send({error: false, message: "Sesión cerrada correctamente" });
 }
 
 module.exports = {

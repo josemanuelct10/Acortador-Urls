@@ -86,7 +86,7 @@ async function getUrls(req, res) {
         // Construye las URLs completas
         const urls = data.map(item => ({
             original_url: item.original_url,
-            short_url: `${baseUrl}${item.short_uuid}` // Construye la URL completa
+            short_uuid: `${baseUrl}${item.short_uuid}` // Construye la URL completa
         }));
 
         return res.status(200).send({ error: false, message: "URLs recuperadas correctamente.", urls: urls });

@@ -30,15 +30,13 @@ export class InicioComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Recupera el número de usos desde localStorage
-    const storedUsos = localStorage.getItem('usosIniciales');
-    if (storedUsos) {
-      this.usosIniciales = parseInt(storedUsos, 10);
-    }
+    this.checkAuthentication();
+  }
 
-    // Verifica la autenticación
+  checkAuthentication() {
     this.userService.isAuthenticated().subscribe(
       (response: any) => {
+        console.log(response);
         if (!response.error) {
           this.isAuthenticated = true;
           this.userInitial = response.user.username[0].toUpperCase();
@@ -55,6 +53,8 @@ export class InicioComponent implements OnInit {
       }
     );
   }
+
+
 
   toggleDropdown() {
     this.showDropdown = !this.showDropdown;
@@ -87,18 +87,16 @@ export class InicioComponent implements OnInit {
   }
 
   logout() {
-    this.userService.logout().subscribe(
-      (response: any) => {
-        if (!response.error) {
-          this.isAuthenticated = false;
-          this.showDropdown = false;
-          this.idUsuario = null;
-          this.userInitial = '';
-          this.userLinks = [];
-        }
-      }
-    );
+    this.userService.logout();
+
+    this.isAuthenticated = false;
+    this.showDropdown = false;
+    this.idUsuario = null;
+    this.userInitial = '';
+    this.userLinks = [];
   }
+
+
 
   shortenUrl() {
     const formData = {
@@ -124,6 +122,8 @@ export class InicioComponent implements OnInit {
             short_uuid: this.shortenedUrl
           });
 
+          console.log(this.userLinks);
+
           // Limpia el campo de URL original
           this.originalUrl = '';
         }
@@ -137,6 +137,7 @@ export class InicioComponent implements OnInit {
         (response: any) => {
           if (!response.error) {
             this.userLinks = response.urls;
+            console.log(this.userLinks);
           }
         }
       );

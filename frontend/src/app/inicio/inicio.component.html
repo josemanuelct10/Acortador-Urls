@@ -115,7 +115,7 @@
     <ul class="space-y-4">
       <li *ngFor="let link of userLinks" class="bg-gray-700 rounded-lg p-4">
         <p class="text-gray-300">{{ link.original_url }}</p>
-        <a [href]="link.short_url" target="_blank" class="text-blue-400 hover:underline">{{ link.short_url }}</a>
+        <a [href]="link.short_url" target="_blank" class="text-blue-400 hover:underline">{{ link.short_uuid }}</a>
       </li>
     </ul>
   </div>
@@ -129,6 +129,4 @@
   <!-- Aquí se renderiza el componente de la ruta actual -->
   <router-outlet></router-outlet>
 </div>
-
-<!-- Footer -->
 
